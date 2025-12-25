@@ -1,0 +1,177 @@
+.dau{
+    background-color: #F5B7B1;
+    color:azure;
+    font-family: Arial, Helvetica, sans-serif;
+    display:flex;
+    padding: 10px;
+    gap: 800px;
+    align-items: center;
+}
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.dtrai{
+    display:flex;
+    margin-left: 10px;
+    width: 100%;
+    gap: 20px;
+}
+a{
+    text-decoration-line: none;
+    color: white;
+}
+ul{
+    list-style: none;
+    padding: 0px;
+}
+.menu{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+li{
+    padding: 0px;
+    
+}
+.menu li ul{
+    position:absolute;
+    background-color: rgba(51, 45, 45, 0.8);
+    padding: 5px;
+    border-radius: 5px;
+    margin: 0px;
+    top: 50px;
+    display:none;
+}
+.menu li:hover ul{
+    display: block;
+}
+.sub-menu li{
+    border-bottom: 1px solid rgb(181, 172, 172); 
+    padding: 5px;
+}
+.dphai{
+    display:flex;
+    margin-right: 0px;
+    width: 100%;
+    gap: 20px;
+    align-items: center;
+}
+.timkiem{
+    border: 1px solid lightgray;
+    width:fit-content;
+    border-radius: 5px;
+}
+.timkiem input{
+    font-size: 15px;
+    border-radius: 5px 0px 0px 5px;
+    border: none;
+    padding: 7px;
+}
+.timkiem button{
+    font-size: 15px;
+    border-radius: 0px 5px 5px 0px;
+    border: none;
+    padding: 7px 10px;    
+    background-color: #FFD6D1;
+    color: white;
+}
+main{
+    width: 85%;
+    gap: 30px;
+    margin: auto;
+    margin-top: 20px;
+    
+}
+.than{
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.xuhuong{
+    background-color: #FFD6D1;
+    border-radius: 2px;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 40px;
+    padding-top: 20px;
+    padding-left: 20px;
+}
+.gioithieu{
+    font-family: Arial, Helvetica, sans-serif;
+    height: 50px;
+    padding-top: 10px;
+    padding-left: 20px;
+    display: flex;
+    gap: 30px;
+}
+.box-right{
+    width: 100%;
+}
+.timkiem{
+    border: 1px solid lightgray;
+    width:fit-content;
+    border-radius: 5px;
+}
+.timkiem input{
+    font-size: 15px;
+    border-radius: 5px 0px 0px 5px;
+    border: none;
+    padding: 7px;
+}
+.timkiem button{
+    font-size: 15px;
+    border-radius: 0px 5px 5px 0px;
+    border: none;
+    padding: 7px 10px;    
+    background-color: rgb(128, 0, 0);
+    color: white;
+}
+.tab-menu{
+    border-radius: 10px;
+    border: 1px solid lightgray;
+}
+.tab-menu li{
+    padding: 10px;
+}
+.border{
+    border-bottom: 1px solid lightgray;
+    border-radius: 10px;
+}
+.snb1{
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.snb1 img{
+    width: 90%;
+
+}
+.khung{
+    border: 1px solid lightgray;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    place-content: center;
+}
+.ttin{
+    padding-left: 20px;
+
+}
+.muon{
+    background-color: blue;
+    color:azure;
+    border-radius: 10px;
+    width:fit-content;
+    padding: 10px;
+    margin-top: 20px;
+
+}
+.ttin1{
+    padding-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+.ttin2{
+    padding-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+h1{font-family: Arial, Helvetica, sans-serif;}

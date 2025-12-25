@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách tác giả</title>
+    <style>
+
+/* Reset nhẹ */
+*{
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Khung tiêu đề */
+.control{
+    width: 80%;
+    margin: 30px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.control h1{
+    margin: 0;
+}
+
+/* Nút thêm chủ đề */
+.box a{
+    text-decoration: none;
+    background: #007bff;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 5px;
+}
+
+.box a:hover{
+    background: #0056b3;
+}
+
+/* Bảng */
+.container{
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+}
+
+.container th,
+.container td{
+    padding: 10px;
+    text-align: center;
+}
+
+.container th{
+    background: #f2f2f2;
+}
+
+/* Link chi tiết */
+.chitiet{
+    text-decoration: none;
+    color: #007bff;
+}
+
+.chitiet:hover{
+    text-decoration: underline;
+}
+
+/* Cột chức năng */
+.chucnang .btn{
+    text-decoration: none;
+    padding: 5px 10px;
+    margin: 0 3px;
+    border-radius: 4px;
+    background: #28a745;
+    color: white;
+    font-size: 14px;
+}
+
+.chucnang .btn:last-child{
+    background: #dc3545;
+}
+
+.chucnang .btn:hover{
+    opacity: 0.8;
+}
+</style>
+     
+</head>
+<body>
+    <div class="control">
+        <h1>Danh sách tác giả</h1>
+        <div class="box">
+            <a href="index.php?page_layout=themtacgia">Thêm tác giả</a>
+
+        </div>
+
+    </div>
+    <table border=1 class="container">
+        <tr>
+        <th>Mã tác giả</th>
+        <th>Tên tác giả</th>
+        <th>Ngày sinh</th>
+        <th>Quốc tịch</th>
+        <th>Mô tả</th>
+        <th>Chức năng</th>
+        </tr>
+    <?php 
+            include("connect.php");
+            $sql = "SELECT `MaTacGia`, `TenTacGia`, `NgaySinh`,`QuocTich`,`MoTa` FROM `tacgia`";
+            $result = mysqli_query($conn, $sql);
+            while($row = mysqli_fetch_array($result)){
+        ?> 
+        <tr>
+            <td><?php echo $row["MaTacGia"] ?></td>
+            <td><a class="chitiet" href="index.php?page_layout=chitiettacgia&MaTacGia=<?php echo $row["MaTacGia"] ?>"><?php echo $row["TenTacGia"] ?></a></td>
+            <td><?php echo $row["NgaySinh"] ?></td>
+            <td><?php echo $row["QuocTich"] ?></td>
+            <td><?php echo $row["MoTa"] ?></td>
+            <td class="chucnang">
+                <a class="btn" href="index.php?page_layout=capnhattacgia&MaTacGia=<?php echo $row["MaTacGia"] ?>">Cập nhật</a>
+                <a class="btn" href="xoatacgia.php?MaTacGia=<?php echo $row["MaTacGia"] ?>">Xóa</a>
+            </td>
+        </tr>
+        <?php }?>
+    </table>
+    
+</body>
+</html>
