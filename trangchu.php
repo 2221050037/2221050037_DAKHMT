@@ -1,249 +1,209 @@
 <?php
-include("connect.php");
+$conn = new mysqli("localhost", "root", "", "quan_ly_cua_hang_sach");
+$conn->set_charset("utf8");
 
-$row_tai_khoan = mysqli_fetch_row(mysqli_query($conn,"SELECT COUNT(*) FROM tai_khoan"))[0];
-$row_sach      = mysqli_fetch_row(mysqli_query($conn,"SELECT COUNT(*) FROM sach"))[0];
-$row_chu_de    = mysqli_fetch_row(mysqli_query($conn,"SELECT COUNT(*) FROM chu_de"))[0];
-$row_tacgia    = mysqli_fetch_row(mysqli_query($conn,"SELECT COUNT(*) FROM tacgia"))[0];
+if ($conn->connect_error) {
+    die("Lỗi kết nối CSDL");
+}
 
-
-$sql_donhang_cho = "
-    SELECT 
-        dh.*,
-        GROUP_CONCAT(s.TuaSach SEPARATOR ', ') AS ten_sach
-    FROM don_hang dh
-    JOIN chi_tiet_don_hang ct ON dh.id = ct.id_don_hang
-    JOIN sach s ON ct.id_sach = s.MaSach
-    WHERE dh.id_trang_thai IN (2,3,4)
-    GROUP BY dh.id
-    ORDER BY dh.ngay_dat DESC
-";
-$donhang_cho = mysqli_query($conn, $sql_donhang_cho);
-
-$sql_donhang_ht = "
-    SELECT 
-        dh.*,
-        GROUP_CONCAT(s.TuaSach SEPARATOR ', ') AS ten_sach
-    FROM don_hang dh
-    JOIN chi_tiet_don_hang ct ON dh.id = ct.id_don_hang
-    JOIN sach s ON ct.id_sach = s.MaSach
-    WHERE dh.id_trang_thai = 5
-    GROUP BY dh.id
-    ORDER BY dh.ngay_dat DESC
-";
-$donhang_ht = mysqli_query($conn, $sql_donhang_ht);
+$theLoai = [
+    9  => "Sách giáo khoa",
+    17 => "Tiểu thuyết",
+    19 => "Trinh thám",
+    20 => "Truyện tranh"
+];
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Tổng quan hệ thống</title>
+<title>Sách mới nhất</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
-    font-family:Arial;
-    background:#f4f4f4;
-    margin:0;
-}
-.content{
-    padding:30px;
-    background:#fff;
-}
-.page-title{
-    font-size:26px;
-    margin:30px 0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f6f6f6}
+main{width:85%;margin:20px auto}
 
-
-.stats-row{
-    display:flex;
-    gap:30px;
-    margin-bottom:30px;
-}
-.card-link{
-    flex:1;
-    text-decoration:none;
-    color:inherit;
-}
-.card{
-    border:1px solid #ddd;
-    padding:20px;
-    text-align:center;
-    background:#f9f9f9;
-    border-radius:8px;
-    transition:.2s;
-}
-.card:hover{
-    background:#e9f2ff;
-    border-color:#007bff;
-    transform:translateY(-3px);
-}
-.number{
-    font-size:32px;
+.xuhuong{
+    background:#FFD6D1;
+    padding:12px 18px;
+    margin:20px 0;
     font-weight:bold;
-    color:#007bff;
+    font-size:18px;
+    border-radius:6px;
 }
 
+h2{margin:20px 0 10px;font-size:20px}
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
+.snb1{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:20px;
 }
-th,td{
-    border:1px solid #ccc;
-    padding:10px;
+
+.khung{
+    background:#fff;
+    border-radius:10px;
+    padding:12px;
     text-align:center;
+    border:1px solid #e0e0e0;
+    transition:.3s;
 }
-th{
-    background:#eee;
-}
-td.left{
-    text-align:left;
+.khung:hover{
+    transform:translateY(-5px);
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
 }
 
-
-.btn-fix{
-    background:orange;
-    color:#000;
-    padding:6px 10px;
-    border-radius:4px;
-    text-decoration:none;
+.khung img{
+    width:100%;
+    height:240px;
+    object-fit:cover;
+    border-radius:6px;
 }
-.btn-review{
-    background:#28a745;
+
+.ttin1{font-weight:bold;font-size:14px}
+.ttin1 small{display:block;color:#777;font-weight:normal}
+
+.ttin2{color:#d0021b;font-weight:bold;margin:8px 0}
+
+.stock{font-size:13px;font-weight:bold;margin-bottom:8px}
+.ok{color:#28a745}
+.low{color:#ff9800}
+.out{color:#d0021b}
+
+.chitiet,.muon{
+    display:inline-block;
+    padding:7px 14px;
+    border-radius:6px;
+    font-size:13px;
     color:#fff;
-    padding:6px 10px;
-    border-radius:4px;
     text-decoration:none;
 }
-
-
-.status-wait{color:#ff9800;font-weight:bold}
-.status-confirm{color:#007bff;font-weight:bold}
-.status-ship{color:#28a745;font-weight:bold}
-.status-done{color:#555;font-weight:bold}
+.chitiet{background:#28a745}
+.muon{background:#2d2dfc}
+.muon.disable{
+    background:#ccc;
+    cursor:not-allowed;
+}
 </style>
 </head>
 
 <body>
-<div class="content">
 
-<h2 class="page-title">Tổng quan hệ thống</h2>
+<section class="hot-books">
+<h2>Sách bán chạy</h2>
 
-<!-- DASHBOARD CLICK -->
-<div class="stats-row">
-    <a href="index.php?page_layout=taikhoan" class="card-link">
-        <div class="card">
-            Tài khoản
-            <div class="number"><?= $row_tai_khoan ?></div>
-        </div>
+<div class="snb1">
+<?php
+$sqlHot = "
+    SELECT s.MaSach,s.TuaSach,s.TacGia,s.HinhAnh,s.GiaTri,
+           s.SoLuong,
+           SUM(ct.so_luong) AS TongBan
+    FROM sach s
+    JOIN chi_tiet_don_hang ct ON s.MaSach = ct.id_sach
+    GROUP BY s.MaSach
+    ORDER BY TongBan DESC
+    LIMIT 5
+";
+$resultHot = $conn->query($sqlHot);
+
+if ($resultHot && $resultHot->num_rows > 0):
+while ($row = $resultHot->fetch_assoc()):
+?>
+<div class="khung">
+    <img src="./img/product/<?= htmlspecialchars($row['HinhAnh']) ?>">
+
+    <div class="ttin1">
+        <?= htmlspecialchars($row['TuaSach']) ?>
+        <small><?= htmlspecialchars($row['TacGia']) ?></small>
+    </div>
+
+    <div class="ttin2">
+        <?= number_format($row['GiaTri'],0,',','.') ?>đ
+    </div>
+
+    <div class="stock">
+        <?php if ($row['SoLuong'] > 5): ?>
+            <span class="ok">Còn <?= $row['SoLuong'] ?> cuốn</span>
+        <?php elseif ($row['SoLuong'] > 0): ?>
+            <span class="low">Sắp hết (<?= $row['SoLuong'] ?>)</span>
+        <?php else: ?>
+            <span class="out">Hết hàng</span>
+        <?php endif; ?>
+    </div>
+
+    <small style="color:#ff5a5f;font-weight:bold">
+        Đã bán: <?= (int)$row['TongBan'] ?>
+    </small><br><br>
+
+    <a class="chitiet" href="chitietsach.php?MaSach=<?= $row['MaSach'] ?>">
+        Chi tiết
     </a>
 
-    <a href="index.php?page_layout=sach" class="card-link">
-        <div class="card">
-            Sách
-            <div class="number"><?= $row_sach ?></div>
-        </div>
-    </a>
+    <?php if ($row['SoLuong'] > 0): ?>
+        <a class="muon" href="themvaogio.php?MaSach=<?= $row['MaSach'] ?>">Mua</a>
+    <?php else: ?>
+        <a class="muon disable">Hết hàng</a>
+    <?php endif; ?>
 </div>
-
-<div class="stats-row">
-    <a href="index.php?page_layout=chude" class="card-link">
-        <div class="card">
-            Chủ đề
-            <div class="number"><?= $row_chu_de ?></div>
-        </div>
-    </a>
-
-    <a href="index.php?page_layout=tacgia" class="card-link">
-        <div class="card">
-            Tác giả
-            <div class="number"><?= $row_tacgia ?></div>
-        </div>
-    </a>
+<?php endwhile; endif; ?>
 </div>
+</section>
 
 
-<h2 class="page-title">Đơn hàng đang xử lý</h2>
+<main>
+<div class="xuhuong">Truyện mới nhất</div>
 
-<table>
-<tr>
-    <th>Mã đơn</th>
-    <th>ID người dùng</th>
-    <th>Tên sách</th>
-    <th>Tổng tiền</th>
-    <th>Địa chỉ giao</th>
-    <th>Trạng thái</th>
-    <th>Ngày đặt</th>
-    <th>Chức năng</th>
-</tr>
+<?php foreach ($theLoai as $maCD => $tenTL): ?>
+<h2><?= $tenTL ?> – Sách mới</h2>
 
-<?php while($row = mysqli_fetch_assoc($donhang_cho)){ ?>
-<tr>
-    <td>DH<?= $row['id'] ?></td>
-    <td><?= $row['id_nguoi_dung'] ?></td>
-    <td class="left"><?= htmlspecialchars($row['ten_sach']) ?></td>
-    <td><?= number_format($row['tong_tien'],0,',','.') ?> đ</td>
-    <td><?= htmlspecialchars($row['id_dia_chi']) ?></td>
-    <td>
-        <?php
-        if ($row['id_trang_thai'] == 2)
-            echo '<span class="status-wait">Chờ xác nhận</span>';
-        elseif ($row['id_trang_thai'] == 3)
-            echo '<span class="status-confirm">Đã xác nhận</span>';
-        elseif ($row['id_trang_thai'] == 4)
-            echo '<span class="status-ship">Đang giao</span>';
-        ?>
-    </td>
-    <td><?= date("d/m/Y H:i", strtotime($row['ngay_dat'])) ?></td>
-    <td>
-        <?php if ($row['id_trang_thai'] == 2) { ?>
-            <a class="btn-fix" href="capnhatdonhang.php?id=<?= $row['id'] ?>&next=3">Xác nhận</a>
-        <?php } elseif ($row['id_trang_thai'] == 3) { ?>
-            <a class="btn-fix" href="capnhatdonhang.php?id=<?= $row['id'] ?>&next=4">Giao hàng</a>
-        <?php } elseif ($row['id_trang_thai'] == 4) { ?>
-            <a class="btn-fix" href="capnhatdonhang.php?id=<?= $row['id'] ?>&next=5">Hoàn thành</a>
-        <?php } ?>
-    </td>
-</tr>
-<?php } ?>
-</table>
+<div class="snb1">
+<?php
+$sql = "SELECT MaSach,TuaSach,TacGia,HinhAnh,GiaTri,SoLuong
+        FROM sach
+        WHERE MaCD = ?
+        ORDER BY MaSach DESC
+        LIMIT 5";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i",$maCD);
+$stmt->execute();
+$result = $stmt->get_result();
 
+while ($row = $result->fetch_assoc()):
+?>
+<div class="khung">
+    <img src="./img/product/<?= htmlspecialchars($row['HinhAnh']) ?>">
 
-<h2 class="page-title">Đơn hàng đã hoàn thành</h2>
+    <div class="ttin1">
+        <?= htmlspecialchars($row['TuaSach']) ?>
+        <small><?= htmlspecialchars($row['TacGia']) ?></small>
+    </div>
 
-<table>
-<tr>
-    <th>Mã đơn</th>
-    <th>ID người dùng</th>
-    <th>Tên sách</th>
-    <th>Tổng tiền</th>
-    <th>Địa chỉ giao</th>
-    <th>Ngày đặt</th>
-    <th>Trạng thái</th>
-    <th>Đánh giá</th>
-</tr>
+    <div class="ttin2">
+        <?= number_format($row['GiaTri'],0,',','.') ?>đ
+    </div>
 
-<?php while($row = mysqli_fetch_assoc($donhang_ht)){ ?>
-<tr>
-    <td>DH<?= $row['id'] ?></td>
-    <td><?= $row['id_nguoi_dung'] ?></td>
-    <td class="left"><?= htmlspecialchars($row['ten_sach']) ?></td>
-    <td><?= number_format($row['tong_tien'],0,',','.') ?> đ</td>
-    <td><?= htmlspecialchars($row['id_dia_chi']) ?></td>
-    <td><?= date("d/m/Y H:i", strtotime($row['ngay_dat'])) ?></td>
-    <td><span class="status-done">Hoàn thành</span></td>
-    <td>
-        <a class="btn-review" href="danhgiacuand.php?id_don=<?= $row['id'] ?>">
-            Xem
-        </a>
-    </td>
-</tr>
-<?php } ?>
-</table>
+    <div class="stock">
+        <?= $row['SoLuong'] > 0
+            ? "Còn {$row['SoLuong']} cuốn"
+            : "Hết hàng"; ?>
+    </div>
 
+    <a class="chitiet" href="chitietsach.php?MaSach=<?= $row['MaSach'] ?>">Chi tiết</a>
+
+    <?php if ($row['SoLuong'] > 0): ?>
+        <a class="muon" href="themvaogio.php?MaSach=<?= $row['MaSach'] ?>">Mua</a>
+    <?php else: ?>
+        <a class="muon disable">Hết hàng</a>
+    <?php endif; ?>
 </div>
+<?php endwhile; $stmt->close(); ?>
+</div>
+<?php endforeach; ?>
+</main>
+
 </body>
 </html>
+
+<?php $conn->close(); ?>

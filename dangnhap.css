@@ -1,0 +1,145 @@
+.dau{
+    background-color: #F5B7B1;
+    color:azure;
+    font-family: Arial, Helvetica, sans-serif;
+    display:flex;
+    padding: 10px;
+    gap: 800px;
+    align-items: center;
+}
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.dtrai{
+    display:flex;
+    margin-left: 10px;
+    width: 100%;
+    gap: 20px;
+}
+a{
+    text-decoration-line: none;
+    color: white;
+}
+ul{
+    list-style: none;
+    padding: 0px;
+}
+.menu{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+li{
+    padding: 0px;
+    
+}
+.menu li ul{
+    position:absolute;
+    background-color: rgba(51, 45, 45, 0.8);
+    padding: 5px;
+    border-radius: 5px;
+    margin: 0px;
+    top: 33px;
+    display:none;
+}
+.menu li:hover ul{
+    display: block;
+}
+.sub-menu li{
+    border-bottom: 1px solid rgb(181, 172, 172); 
+    padding: 5px;
+}
+.dphai{
+    display:flex;
+    margin-right: 0px;
+    width: 100%;
+    gap: 20px;
+    align-items: center;
+}
+.timkiem{
+    border: 1px solid lightgray;
+    width:fit-content;
+    border-radius: 5px;
+}
+.timkiem input{
+    font-size: 15px;
+    border-radius: 5px 0px 0px 5px;
+    border: none;
+    padding: 7px;
+}
+.timkiem button{
+    font-size: 15px;
+    border-radius: 0px 5px 5px 0px;
+    border: none;
+    padding: 7px 10px;    
+    background-color: #FFD6D1;
+    color: white;
+}
+main{
+    width: 85%;
+    gap: 30px;
+    margin: auto;
+    margin-top: 20px;
+    
+}
+
+.box-right{
+    width: 100%;
+    margin: auto;
+}
+.timkiem{
+    border: 1px solid lightgray;
+    width:fit-content;
+    border-radius: 5px;
+}
+.timkiem input{
+    font-size: 15px;
+    border-radius: 5px 0px 0px 5px;
+    border: none;
+    padding: 7px;
+}
+.timkiem button{
+    font-size: 15px;
+    border-radius: 0px 5px 5px 0px;
+    border: none;
+    padding: 7px 10px;    
+    background-color: rgb(85, 85, 203);
+    color: white;
+}
+.tab-menu{
+    border-radius: 10px;
+    border: 1px solid lightgray;
+}
+.tab-menu li{
+    padding: 10px;
+}
+.border{
+    border-bottom: 1px solid lightgray;
+}
+h1{
+    padding: 0px;
+    margin-bottom: 20px;
+    margin-top: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+form div{
+    padding: 10px 0px;
+}
+.tt input{
+    margin-top: 5px;
+    width: 60%;
+    height: 30px;
+    border-radius: 5px;
+    font-size: 16px;
+    border: 1px solid lightgray;
+}
+.btn input{
+    padding: 10px 15px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+}
